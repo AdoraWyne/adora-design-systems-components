@@ -31,13 +31,15 @@ const Button = ({
   isLoading = false,
   size = "md",
   variant = "primary",
+  type = "button",
   icon,
   ...props
 }: ButtonProps) => {
   return (
     <button
-      disabled={disabled || isLoading}
       aria-busy={isLoading}
+      disabled={disabled || isLoading}
+      type={type}
       className={`
         rounded font-medium transition-colors 
         ${variantStyles[variant]} 
