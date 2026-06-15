@@ -1,9 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-kick-brand: var(--kick-brand);
+}
+
 :root {
-  --text: #6b6375;
+  --text: #fff;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #000;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
@@ -52,4 +56,13 @@
   #social .button-icon {
     filter: invert(1) brightness(2);
   }
+}
+
+body {
+  margin: 2rem;
+}
+
+h1 {
+  font-size: 3rem;
+  margin: 1rem 0;
 }
