@@ -47,7 +47,7 @@ Accessibility:
 
 ---
 
-If pass in a element:
+If pass in as an element:
 
 ```js
   const Content = ({ content }: { content: string }) => <div>{content}</div>;
@@ -69,4 +69,65 @@ If pass in a element:
       })}
     </div>
   );
+```
+
+---
+
+# Navigate with keyboard: ArrowDown, ArrowUp
+
+**useRef**
+
+- Keyboard navigation needs `.focus()` on a specific DOM node, which is a browser behaviour not React.
+- To call `.focus()`, you need a direct reference to that DOM node.
+- When this specific DOM changes, we dont want to trigger rendering.
+
+**Map()**
+
+- using Map() here because it offers unique key-value pairs, better than using normal object and array.
+
+**Default Behaviour**
+
+- Arrow up and down default behaviour is scrolling.
+- Normally disable the default behaviour if you are giving another definition for this action.
+
+**Extra Note**
+
+- Pass ref as props by annotate the type of `type Ref` from react, otherwise React will interfere because `ref` is reserved word and cannot just pass as normal props.
+
+```ts
+const accordionItemRefs = useRef(new Map<number, HTMLButtonElement>());
+
+const register = (index: number, node: HTMLButtonElement | null) => {
+  if (node) {
+    accordionItemRefs.current.set(index, node);
+  } else { // when unmount
+    accordionItemRefs.current.delete(index); // clean up job
+  }
+};
+
+const handleKeys = (index: number, e: React.KeyboardEvent) => {
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    const next = accordionItemRefs.current.get(index + 1);
+    next?.focus();
+  }
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    const prev = accordionItemRefs.current.get(index - 1);
+    prev?.focus();
+  }
+};
+
+  return (
+    <div>
+      {items.map(({ id, title, content }, index) => (
+        <AccordionItem
+          // other props...
+          onKeyDown={(e) => handleKeys(index, e)}
+          ref={(node) => register(index, node)}
+        >
+          {content}
+        </AccordionItem>
+      ))}
+    </div>
 ```

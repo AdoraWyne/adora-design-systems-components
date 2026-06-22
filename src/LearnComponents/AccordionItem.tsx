@@ -1,17 +1,23 @@
+import type { Ref } from "react";
+
 type AccordionItemProps = {
-  id: string;
-  title: string;
   children: React.ReactNode;
+  id: string;
   isOpen: boolean;
+  onKeyDown: (e: React.KeyboardEvent) => void;
   onToggle: (id: string) => void;
+  ref: Ref<HTMLButtonElement>;
+  title: string;
 };
 
 const AccordionItem = ({
+  children,
   id,
   isOpen,
-  children,
-  title,
+  onKeyDown,
   onToggle,
+  ref,
+  title,
 }: AccordionItemProps) => {
   const accordionPanelId = `panel-${id}`;
   const accordionHeaderId = `trigger-${id}`;
@@ -20,10 +26,12 @@ const AccordionItem = ({
     <div className="border p-4">
       <h4>
         <button
-          onClick={() => onToggle(id)}
-          aria-expanded={isOpen}
           aria-controls={accordionPanelId}
+          aria-expanded={isOpen}
           id={accordionHeaderId}
+          onClick={() => onToggle(id)}
+          onKeyDown={onKeyDown}
+          ref={ref}
           className="flex justify-between w-full"
         >
           <span>{title}</span>

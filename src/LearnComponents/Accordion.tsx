@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import AccordionItem from "./AccordionItem";
 
 type AccordionItem = {
@@ -14,6 +14,28 @@ type AccordionProps = {
 
 const Accordion = ({ items, type }: AccordionProps) => {
   const [openItems, setOpenItems] = useState<string[]>([]);
+  const accordionItemRefs = useRef(new Map<number, HTMLButtonElement>());
+
+  const register = (index: number, node: HTMLButtonElement | null) => {
+    if (node) {
+      accordionItemRefs.current.set(index, node);
+    } else {
+      accordionItemRefs.current.delete(index);
+    }
+  };
+
+  const handleKeys = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const next = accordionItemRefs.current.get(index + 1);
+      next?.focus();
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const prev = accordionItemRefs.current.get(index - 1);
+      prev?.focus();
+    }
+  };
 
   const handleSingleToggle = (id: string) => {
     setOpenItems((prev) => (prev.includes(id) ? [] : [id]));
@@ -30,13 +52,15 @@ const Accordion = ({ items, type }: AccordionProps) => {
 
   return (
     <div>
-      {items.map(({ id, title, content }) => (
+      {items.map(({ id, title, content }, index) => (
         <AccordionItem
-          key={id}
           id={id}
-          title={title}
           isOpen={openItems.includes(id)}
+          key={id}
+          onKeyDown={(e) => handleKeys(index, e)}
           onToggle={handleToggle}
+          ref={(node) => register(index, node)}
+          title={title}
         >
           {content}
         </AccordionItem>
