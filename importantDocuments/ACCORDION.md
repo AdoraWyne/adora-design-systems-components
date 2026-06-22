@@ -1,4 +1,6 @@
-_[Claude Chat](https://claude.ai/chat/7feb9bd6-4c3b-4e9a-8e6c-55dcb9394a77)_
+_[Claude Chat](https://claude.ai/chat/7feb9bd6-4c3b-4e9a-8e6c-55dcb9394a77)_ ✅
+
+- [Accordion Pattern in ARIA APG](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/)
 
 - Only use one accordion to handle single and multiple open.
 
@@ -17,6 +19,7 @@ Components:
       - aria-expanded=boolean
       - aria-controls={`panel-${id}`} - links to the panel
       - id={`trigger-${id}`} - labelled by the panel
+      - aria-hidden="true" - the logo showing open/close accordion only for visual decoration
     - panel:
       - id={`panel-${id}`} - controlled by header
       - aria-labelledby={`trigger-${id}`}
@@ -34,11 +37,13 @@ Accessibility:
 - aria-expanded=boolean
 - aria-controls={`panel-${id}`} - links to the panel
 - id={`trigger-${id}`} - labelled by the panel
+- aria-hidden="true" on the logo showing open or close
 
 **On Panel**
 
 - id={`panel-${id}`} - controlled by header
 - aria-labelledby={`trigger-${id}`}
+- role="region" - avoid using this when contains more than about 6 panels.
 
 ---
 

@@ -27,7 +27,7 @@ const AccordionItem = ({
           className="flex justify-between w-full"
         >
           <span>{title}</span>
-          <span aria-label="toggle-accordion">{isOpen ? "-" : "+"}</span>
+          <span aria-hidden="true">{isOpen ? "-" : "+"}</span>
         </button>
       </h4>
       <div
