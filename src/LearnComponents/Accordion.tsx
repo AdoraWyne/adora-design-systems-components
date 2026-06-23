@@ -25,15 +25,23 @@ const Accordion = ({ items, type }: AccordionProps) => {
   };
 
   const handleKeys = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      const next = accordionItemRefs.current.get(index + 1);
-      next?.focus();
-    }
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      const prev = accordionItemRefs.current.get(index - 1);
-      prev?.focus();
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        accordionItemRefs.current.get(index + 1)?.focus();
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        accordionItemRefs.current.get(index - 1)?.focus();
+        break;
+      case "Home":
+        accordionItemRefs.current.get(0)?.focus();
+        break;
+      case "End":
+        accordionItemRefs.current
+          .get(accordionItemRefs.current.size - 1)
+          ?.focus();
+        break;
     }
   };
 
