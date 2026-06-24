@@ -150,4 +150,19 @@ describe("Accordion", () => {
     await user.keyboard("{Home}");
     expect(triggerA).toHaveFocus();
   });
+
+  it("keeps focus in place at the boundaries: ArrowUp on the first header, ArrowDown on the last", async () => {
+    const { user } = renderAccordion();
+
+    const triggerA = getTrigger("Section A");
+    const triggerC = getTrigger("Section C");
+
+    await user.click(triggerA);
+    await user.keyboard("{ArrowUp}");
+    expect(triggerA).toHaveFocus();
+
+    await user.click(triggerC);
+    await user.keyboard("{ArrowDown}");
+    expect(triggerC).toHaveFocus();
+  });
 });
