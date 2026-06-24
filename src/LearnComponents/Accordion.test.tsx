@@ -11,22 +11,29 @@ const items = [
   { id: "c", title: "Section C", content: "Content C" },
 ];
 
+// Renders with the shared fixture and returns a user-event instance for driving
+// interactions. `type` defaults to "single" since most tests use it; the
+// multiple-mode test overrides it.
+function renderAccordion(type: "single" | "multiple" = "single") {
+  const user = userEvent.setup();
+  render(<Accordion items={items} type={type} />);
+  return { user };
+}
+
+// Look up a header by its visible title — what nearly every test does.
+const getTrigger = (title: string) =>
+  screen.getByRole("button", { name: title });
+
 describe("Accordion", () => {
   it("renders a trigger for every item and starts with all panels closed", () => {
-    render(<Accordion items={items} type="single" />);
+    renderAccordion();
 
     // Each header renders as a button whose accessible name is the item title.
     // (getByRole's `name` ignores the aria-hidden "+"/"-" icon, so we get just
     // the title — this is what a screen reader would announce.)
-    expect(
-      screen.getByRole("button", { name: "Section A" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Section B" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Section C" }),
-    ).toBeInTheDocument();
+    expect(getTrigger("Section A")).toBeInTheDocument();
+    expect(getTrigger("Section B")).toBeInTheDocument();
+    expect(getTrigger("Section C")).toBeInTheDocument();
 
     // On mount nothing is open, so every trigger reports collapsed...
     for (const trigger of screen.getAllByRole("button")) {
@@ -40,12 +47,9 @@ describe("Accordion", () => {
   });
 
   it("opens a panel when its header is clicked", async () => {
-    // user-event is async: every interaction returns a promise, so we set up an
-    // instance and `await` each action. This flushes React's state updates for us.
-    const user = userEvent.setup();
-    render(<Accordion items={items} type="single" />);
+    const { user } = renderAccordion();
 
-    const triggerA = screen.getByRole("button", { name: "Section A" });
+    const triggerA = getTrigger("Section A");
 
     // Precondition: A is closed before we touch it.
     expect(triggerA).toHaveAttribute("aria-expanded", "false");
@@ -59,10 +63,9 @@ describe("Accordion", () => {
   });
 
   it("closes an open panel when its header is clicked again", async () => {
-    const user = userEvent.setup();
-    render(<Accordion items={items} type="single" />);
+    const { user } = renderAccordion();
 
-    const triggerA = screen.getByRole("button", { name: "Section A" });
+    const triggerA = getTrigger("Section A");
 
     await user.click(triggerA);
 
@@ -75,11 +78,10 @@ describe("Accordion", () => {
   });
 
   it("in single mode, opening one panel closes the others", async () => {
-    const user = userEvent.setup();
-    render(<Accordion items={items} type="single" />);
+    const { user } = renderAccordion();
 
-    const triggerA = screen.getByRole("button", { name: "Section A" });
-    const triggerB = screen.getByRole("button", { name: "Section B" });
+    const triggerA = getTrigger("Section A");
+    const triggerB = getTrigger("Section B");
 
     await user.click(triggerA);
 
@@ -95,11 +97,10 @@ describe("Accordion", () => {
   });
 
   it("in multiple mode, able to open multiple panel", async () => {
-    const user = userEvent.setup();
-    render(<Accordion items={items} type="multiple" />);
+    const { user } = renderAccordion("multiple");
 
-    const triggerA = screen.getByRole("button", { name: "Section A" });
-    const triggerB = screen.getByRole("button", { name: "Section B" });
+    const triggerA = getTrigger("Section A");
+    const triggerB = getTrigger("Section B");
 
     expect(triggerA).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByText("Content A")).not.toBeVisible();
@@ -116,11 +117,10 @@ describe("Accordion", () => {
   });
 
   it("moves focus to the next header on ArrowDown and the previous on ArrowUp", async () => {
-    const user = userEvent.setup();
-    render(<Accordion items={items} type="single" />);
+    const { user } = renderAccordion();
 
-    const triggerA = screen.getByRole("button", { name: "Section A" });
-    const triggerB = screen.getByRole("button", { name: "Section B" });
+    const triggerA = getTrigger("Section A");
+    const triggerB = getTrigger("Section B");
 
     // Put keyboard focus on A first. `user.keyboard` dispatches keys to whatever
     // is currently focused, so the starting header has to be focused. We focus it
@@ -136,11 +136,10 @@ describe("Accordion", () => {
   });
 
   it("moves focus to the first header on Home and the last on End", async () => {
-    const user = userEvent.setup();
-    render(<Accordion items={items} type="single" />);
+    const { user } = renderAccordion();
 
-    const triggerA = screen.getByRole("button", { name: "Section A" });
-    const triggerC = screen.getByRole("button", { name: "Section C" });
+    const triggerA = getTrigger("Section A");
+    const triggerC = getTrigger("Section C");
 
     triggerA.focus();
     expect(triggerA).toHaveFocus();
